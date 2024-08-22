@@ -1,5 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import Logo from "./logo";
+import { usePathname } from "next/navigation";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 const routes = [
   { name: "Home", path: "/" },
@@ -7,17 +12,32 @@ const routes = [
 ];
 
 export default function Header() {
+  const activePathname = usePathname();
+
   return (
-    <header className="flex justify-between items-center border-b border-white/10 h-14 px-3 sm:px-9">
+    <header className="flex h-14 items-center justify-between border-b border-white/10 px-3 sm:px-9">
       <Logo />
-      <nav>
-        <ul className="flex gap-6 text-sm">
-          {routes.map(route => (
+      <nav className="h-full">
+        <ul className="flex h-full gap-6 text-sm">
+          {routes.map((route) => (
             <li
-              className="text-white/50 hover:text-white transition"
+              className={cn(
+                "relative flex items-center transition hover:text-white",
+                {
+                  "text-white": activePathname === route.path,
+                  "text-white/50": activePathname !== route.path,
+                },
+              )}
               key={route.path}
             >
               <Link href={route.path}>{route.name}</Link>
+
+              {activePathname === route.path && (
+                <motion.div
+                  layoutId="header-active-link"
+                  className="absolute bottom-0 h-1 w-full bg-accent"
+                ></motion.div>
+              )}
             </li>
           ))}
         </ul>
